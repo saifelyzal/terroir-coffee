@@ -1,0 +1,12 @@
+{
+  "name": "terroir-coffee",
+  "version": "1.0.0",
+  "description": "Terroir — Specialty Coffee website",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
