@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Pour Over — Terroir Brew Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --espresso:   #120b07;
+      --roast:      #1e1008;
+      --bark:       #2d1a0d;
+      --mahogany:   #4a2412;
+      --amber:      #c8720a;
+      --gold:       #e8a020;
+      --cream:      #f4e4cc;
+      --parchment:  #fdf6ed;
+      --fog:        #b09070;
+      --rust:       #c84820;
+      --white:      #fff8f0;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--espresso);
+      color: var(--cream);
+      font-family: 'Crimson Pro', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* grain overlay, matches main site texture */
+    body::before {
+      content: '';
+      position: fixed; inset: 0; z-index: 9990;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.035;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    a { color: inherit; }
+
+    .home-link {
+      position: fixed; top: 28px; left: 56px; z-index: 50;
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--fog); text-decoration: none;
+      display: inline-flex; align-items: center; gap: 10px;
+      transition: color 0.3s;
+    }
+    .home-link::before { content: '←'; }
+    .home-link:hover { color: var(--gold); }
+
+    .wrap { max-width: 760px; margin: 0 auto; padding: 0 32px; }
+
+    /* ── Header ── */
+    .guide-header {
+      padding: 200px 0 96px;
+      background:
+        radial-gradient(ellipse 70% 50% at 80% 0%, rgba(200,114,10,0.16) 0%, transparent 70%),
+        linear-gradient(180deg, #120b07 0%, #1e1008 100%);
+    }
+    .guide-eyebrow {
+      font-family: 'DM Mono', monospace; font-size: 11px;
+      letter-spacing: 0.28em; text-transform: uppercase; color: var(--amber);
+      margin-bottom: 28px;
+      display: flex; align-items: center; gap: 16px;
+      opacity: 0; animation: fadeUp 0.8s ease 0.1s forwards;
+    }
+    .guide-eyebrow::before { content: ''; width: 40px; height: 1px; background: var(--amber); }
+    .guide-title {
+      font-family: 'Playfair Display', serif; font-weight: 900;
+      font-size: clamp(48px, 8vw, 84px); line-height: 0.95;
+      letter-spacing: -0.02em; color: var(--white);
+      text-wrap: balance;
+      opacity: 0; animation: fadeUp 0.9s ease 0.25s forwards;
+    }
+    .guide-title em { font-style: italic; color: var(--gold); display: block; }
+    .guide-subtitle {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(19px, 2.2vw, 25px); font-weight: 400;
+      color: var(--fog); margin-top: 24px; max-width: 520px;
+      opacity: 0; animation: fadeUp 0.9s ease 0.4s forwards;
+    }
+
+    /* ── Spec strip ── */
+    .spec-strip {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      background: var(--roast);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .spec {
+      padding: 32px 24px; text-align: center;
+      border-right: 1px solid rgba(255,255,255,0.06);
+    }
+    .spec:last-child { border-right: none; }
+    .spec-value {
+      font-family: 'Playfair Display', serif; font-weight: 900;
+      font-size: clamp(22px, 3vw, 30px); color: var(--gold); line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .spec-label {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase; color: var(--fog);
+      margin-top: 10px;
+    }
+
+    /* ── Body sections ── */
+    .guide-section { padding: 96px 0; }
+    .guide-section + .guide-section { border-top: 1px solid rgba(255,255,255,0.06); }
+    .section-label {
+      font-family: 'DM Mono', monospace; font-size: 10px;
+      letter-spacing: 0.32em; text-transform: uppercase; color: var(--amber);
+      margin-bottom: 24px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .section-label::before { content: ''; width: 40px; height: 1px; background: var(--amber); }
+    .section-heading {
+      font-family: 'Playfair Display', serif; font-weight: 700;
+      font-size: clamp(28px, 4vw, 40px); color: var(--white);
+      line-height: 1.1; margin-bottom: 28px; text-wrap: balance;
+    }
+    .section-heading em { font-style: italic; color: var(--gold); }
+    .lede {
+      font-family: 'Crimson Pro', serif; font-size: 19px; font-weight: 300;
+      line-height: 1.8; color: var(--fog); max-width: 620px;
+    }
+    .lede strong { color: var(--cream); font-weight: 600; }
+
+    /* ── Equipment list ── */
+    .kit-list { margin-top: 40px; display: flex; flex-direction: column; }
+    .kit-item {
+      display: grid; grid-template-columns: 120px 1fr; gap: 24px;
+      padding: 22px 0; border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .kit-item:last-child { border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .kit-name {
+      font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--cream);
+    }
+    .kit-desc {
+      font-family: 'Crimson Pro', serif; font-size: 16px; font-weight: 300;
+      color: var(--fog); line-height: 1.6;
+    }
+
+    /* ── Step sequence ── */
+    .steps { margin-top: 48px; display: flex; flex-direction: column; }
+    .step {
+      display: grid; grid-template-columns: 72px 1fr auto; gap: 28px;
+      align-items: baseline;
+      padding: 32px 0; border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .step:last-child { border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .step-index {
+      font-family: 'Playfair Display', serif; font-weight: 900;
+      font-size: 40px; color: rgba(200,114,10,0.28); line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+    .step-body { }
+    .step-name {
+      font-family: 'Playfair Display', serif; font-weight: 700;
+      font-size: 24px; color: var(--white); margin-bottom: 8px;
+    }
+    .step-desc {
+      font-family: 'Crimson Pro', serif; font-size: 16px; font-weight: 300;
+      color: var(--fog); line-height: 1.6; max-width: 440px;
+    }
+    .step-time {
+      font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: 0.1em;
+      color: var(--amber); white-space: nowrap; text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* ── Tips ── */
+    .tips-grid {
+      margin-top: 40px; display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+      background: rgba(255,255,255,0.06);
+    }
+    .tip-card {
+      background: var(--espresso); padding: 32px;
+    }
+    .tip-symptom {
+      font-family: 'DM Mono', monospace; font-size: 11px; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--rust); margin-bottom: 12px;
+    }
+    .tip-fix {
+      font-family: 'Crimson Pro', serif; font-size: 16px; font-weight: 300;
+      color: var(--fog); line-height: 1.6;
+    }
+    .tip-fix strong { color: var(--cream); font-weight: 600; }
+
+    /* ── Closing ── */
+    .closing {
+      padding: 120px 0 160px; text-align: center;
+      background: var(--bark);
+    }
+    .closing-quote {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(24px, 3.4vw, 36px); color: var(--cream);
+      line-height: 1.35; max-width: 620px; margin: 0 auto 44px;
+      text-wrap: balance;
+    }
+    .closing-quote em { color: var(--gold); }
+    .btn-primary {
+      display: inline-block; text-decoration: none;
+      font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--espresso); background: var(--amber);
+      padding: 16px 36px; transition: background 0.3s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--gold); transform: translateY(-2px); }
+
+    @media (max-width: 720px) {
+      .home-link { left: 24px; top: 20px; }
+      .guide-header { padding: 140px 0 64px; }
+      .spec-strip { grid-template-columns: repeat(2, 1fr); }
+      .spec:nth-child(2) { border-right: none; }
+      .spec:nth-child(3), .spec:nth-child(4) { border-top: 1px solid rgba(255,255,255,0.06); }
+      .kit-item, .step { grid-template-columns: 1fr; gap: 8px; }
+      .step-time { text-align: left; }
+      .tips-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <a href="index.html" class="home-link">Terroir</a>
+
+  <header class="guide-header">
+    <div class="wrap">
+      <div class="guide-eyebrow">Brew Guide — Pour Over</div>
+      <h1 class="guide-title">The Pour<br /><em>Over Method</em></h1>
+      <p class="guide-subtitle">A slow, hands-on brew that rewards attention — clarity and sweetness in every cup, drawn out one spiral at a time.</p>
+    </div>
+  </header>
+
+  <div class="spec-strip">
+    <div class="spec"><div class="spec-value">1:15</div><div class="spec-label">Ratio</div></div>
+    <div class="spec"><div class="spec-value">94°C</div><div class="spec-label">Water Temp</div></div>
+    <div class="spec"><div class="spec-value">Med–Coarse</div><div class="spec-label">Grind</div></div>
+    <div class="spec"><div class="spec-value">3:00</div><div class="spec-label">Total Time</div></div>
+  </div>
+
+  <section class="guide-section">
+    <div class="wrap">
+      <div class="section-label">What You'll Need</div>
+      <h2 class="section-heading">The <em>kit</em></h2>
+      <p class="lede">Four pieces of gear, none of them complicated. What matters is control — over temperature, over pour rate, over time.</p>
+      <div class="kit-list">
+        <div class="kit-item">
+          <div class="kit-name">Dripper</div>
+          <div class="kit-desc">A V60 or Chemex — anything with a cone or fluted bed that lets water draw through evenly.</div>
+        </div>
+        <div class="kit-item">
+          <div class="kit-name">Filter</div>
+          <div class="kit-desc">Paper, rinsed with hot water before brewing to clear papery taste and pre-warm the vessel.</div>
+        </div>
+        <div class="kit-item">
+          <div class="kit-name">Gooseneck Kettle</div>
+          <div class="kit-desc">Gives you a thin, controllable stream — the difference between an even bed and a channeled one.</div>
+        </div>
+        <div class="kit-item">
+          <div class="kit-name">Scale & Timer</div>
+          <div class="kit-desc">Pour over is measured, not eyeballed. Weigh the coffee, weigh the water, time the bloom.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guide-section">
+    <div class="wrap">
+      <div class="section-label">Method</div>
+      <h2 class="section-heading">Six steps, <em>three minutes</em></h2>
+      <p class="lede">20g of coffee, ground medium-coarse — like coarse sand. 300g of water total, just off the boil. Follow the pours in order; the timing matters more than precision to the second.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-index">01</div>
+          <div class="step-body">
+            <div class="step-name">Rinse & Dose</div>
+            <div class="step-desc">Rinse the filter, discard the runoff, add 20g of ground coffee and level the bed.</div>
+          </div>
+          <div class="step-time">0:00</div>
+        </div>
+        <div class="step">
+          <div class="step-index">02</div>
+          <div class="step-body">
+            <div class="step-name">Bloom</div>
+            <div class="step-desc">Pour 40g of water to fully saturate the grounds. Swirl once, then let the coffee de-gas.</div>
+          </div>
+          <div class="step-time">0:00 – 0:45</div>
+        </div>
+        <div class="step">
+          <div class="step-index">03</div>
+          <div class="step-body">
+            <div class="step-name">First Pour</div>
+            <div class="step-desc">Slow spiral from the center out, up to 150g total. Keep the bed level, avoid the filter's edge.</div>
+          </div>
+          <div class="step-time">0:45 – 1:15</div>
+        </div>
+        <div class="step">
+          <div class="step-index">04</div>
+          <div class="step-body">
+            <div class="step-name">Second Pour</div>
+            <div class="step-desc">Continue in spirals to 300g total, keeping the water level roughly constant as it drains.</div>
+          </div>
+          <div class="step-time">1:15 – 1:45</div>
+        </div>
+        <div class="step">
+          <div class="step-index">05</div>
+          <div class="step-body">
+            <div class="step-name">Drawdown</div>
+            <div class="step-desc">Let gravity finish the job. A flat, evenly-drained bed is the sign of a clean extraction.</div>
+          </div>
+          <div class="step-time">1:45 – 3:00</div>
+        </div>
+        <div class="step">
+          <div class="step-index">06</div>
+          <div class="step-body">
+            <div class="step-name">Serve</div>
+            <div class="step-desc">Swirl the carafe to even out the brew, pour, and drink while it's still hot enough to steam.</div>
+          </div>
+          <div class="step-time">3:00</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="guide-section">
+    <div class="wrap">
+      <div class="section-label">Troubleshooting</div>
+      <h2 class="section-heading">Tasting it <em>right</em></h2>
+      <p class="lede">Pour over is forgiving once you know what the flavor is telling you. The most common misses, and the one-variable fix for each.</p>
+      <div class="tips-grid">
+        <div class="tip-card">
+          <div class="tip-symptom">Tastes sharp or sour</div>
+          <div class="tip-fix">Under-extracted. <strong>Grind slightly finer</strong>, or slow your pour rate so water spends longer in contact with the grounds.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-symptom">Tastes flat or bitter</div>
+          <div class="tip-fix">Over-extracted. <strong>Grind slightly coarser</strong>, or shorten the drawdown by pouring in fewer, faster stages.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-symptom">Water pools, drains unevenly</div>
+          <div class="tip-fix">Channeling. <strong>Pour in tighter spirals</strong> and keep the stream off the filter's paper edge.</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-symptom">Brew finishes too fast</div>
+          <div class="tip-fix">Grind too coarse for the dripper, or too little coffee for the bed depth. <strong>Increase dose or grind finer.</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="closing">
+    <div class="wrap">
+      <p class="closing-quote">Every cup is a small experiment. Change <em>one</em> variable at a time, and let the coffee tell you what's next.</p>
+      <a href="index.html#roasts" class="btn-primary"><span>Shop Roasts for Pour Over</span></a>
+    </div>
+  </section>
+
+</body>
+</html>
